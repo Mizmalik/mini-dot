@@ -1,0 +1,28 @@
+[Desktop Entry]
+Type=Application
+Name=Cider
+StartupWMClass=Cider
+Comment=A cross-platform Apple Music experience built on Vue.js and written from the ground up with performance in mind.
+GenericName=Music Player
+Exec=cider %U
+Icon=cider
+Categories=Audio;AudioVideo;Music;
+MimeType=x-scheme-handler/cider;x-scheme-handler/itms;x-scheme-handler/itmss;x-scheme-handler/music;x-scheme-handler/itunes;
+Actions=PlayPause;Next;Previous;Stop
+X-XFCE-Source=file:///usr/share/applications/cider.desktop
+
+[Desktop Action PlayPause]
+Name=Play-Pause
+Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.cider /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause
+
+[Desktop Action Next]
+Name=Next
+Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.cider /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next
+
+[Desktop Action Previous]
+Name=Previous
+Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.cider /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous
+
+[Desktop Action Stop]
+Name=Stop
+Exec=dbus-send --print-reply --dest=org.mpris.MediaPlayer2.cider /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Stop

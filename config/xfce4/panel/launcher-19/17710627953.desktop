@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zen Browser
+Comment=Navigateur Zen
+Exec=/home/gaspard/.apps/zen-browser/zen
+Icon=/home/gaspard/.apps/zen-browser/browser/chrome/icons/default/default64.png
+Terminal=false
+Categories=Network;WebBrowser;
+StartupNotify=true
+X-XFCE-Source=file:///home/gaspard/.local/share/applications/zen-browser.desktop
