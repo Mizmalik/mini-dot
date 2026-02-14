@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# setup.sh - Installation portable XFCE + apps + dotfiles + st
+# setup.sh - Installation portable XFCE + apps + dotfiles + st + thème Nordic + Rofi + Nerd Fonts
 # Compatible Debian/Ubuntu et Arch/Manjaro
 
 set -e
@@ -27,9 +27,9 @@ fi
 
 echo "=== Installation des paquets essentiels ==="
 if [[ "$DISTRO" == "ubuntu" || "$DISTRO" == "debian" ]]; then
-    sudo apt install -y steam lsd wget curl apt-transport-https gnupg build-essential git make gcc xfce4 xfce4-goodies snapd
+    sudo apt install -y steam lsd wget curl apt-transport-https gnupg build-essential git make gcc xfce4 xfce4-goodies snapd rofi fontconfig unzip
 elif [[ "$DISTRO" == "arch" || "$DISTRO" == "manjaro" ]]; then
-    sudo pacman -S --noconfirm steam lsd wget curl base-devel git xfce4 xfce4-goodies snapd
+    sudo pacman -S --noconfirm steam lsd wget curl base-devel git xfce4 xfce4-goodies snapd rofi ttf-dejavu fontconfig unzip
 fi
 
 # Activer snap si nécessaire
@@ -91,25 +91,54 @@ else
     echo "⚠️ Dossier $DOTFILES introuvable. Ignoré."
 fi
 
-echo "=== Copie du dossier icons ==="
-DOTFILES="$HOME/dotfiles-xfce/.icon"
-if [ -d "$DOTFILES" ]; then
-    mkdir -p ~/.icons
-    cp -r "$DOTFILES/"* ~/.icons/
-    echo "✅ Configs copiées dans ~/.icons"
-else
-    echo "⚠️ Dossier $DOTFILES introuvable. Ignoré."
-fi
+echo "=== Installation du thème Nordic pour XFCE ==="
+THEME_DIR="$HOME/.themes"
+mkdir -p "$THEME_DIR"
+TMP_NORDIC=$(mktemp -d)
 
-echo "=== Copie du dossier themes ==="
-DOTFILES="$HOME/dotfiles-xfce/themes"
-if [ -d "$DOTFILES" ]; then
-    mkdir -p ~/.themes
-    cp -r "$DOTFILES/"* ~/.themes/
-    echo "✅ Configs copiées dans ~/.themes"
-else
-    echo "⚠️ Dossier $DOTFILES introuvable. Ignoré."
-fi
+echo "📥 Téléchargement du thème Nordic depuis GitHub..."
+git clone --depth=1 https://github.com/EliverLara/Nordic.git "$TMP_NORDIC"
+
+echo "📂 Copie dans $THEME_DIR..."
+cp -r "$TMP_NORDIC/Nordic" "$THEME_DIR/"
+
+rm -rf "$TMP_NORDIC"
+
+echo "✅ Thème Nordic installé ! Pour l'appliquer :"
+echo "   Paramètres XFCE → Apparence → Style → 'Nordic'"
+echo "   Paramètres XFCE → Gestionnaire de fenêtres → Style → 'Nordic'"
+
+echo "=== Installation des Nerd Fonts (y compris Iosevka Nerd Font) ==="
+FONTS_DIR="$HOME/.local/share/fonts"
+mkdir -p "$FONTS_DIR"
+TMP_FONTS=$(mktemp -d)
+
+# Liste des Nerd Fonts à installer
+NERD_FONTS=(
+    "Iosevka"
+    "FiraCode"
+    "Hack"
+    "RobotoMono"
+    "DejaVuSansMono"
+    "SourceCodePro"
+    "Meslo"
+    "JetBrainsMono"
+    "UbuntuMono"
+)
+
+for font in "${NERD_FONTS[@]}"; do
+    echo "📥 Téléchargement de $font Nerd Font..."
+    FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${font// /}-Complete.zip"
+    wget -q -O "$TMP_FONTS/$font.zip" "$FONT_URL"
+    unzip -qq "$TMP_FONTS/$font.zip" -d "$TMP_FONTS/$font"
+    cp -r "$TMP_FONTS/$font/"* "$FONTS_DIR/"
+done
+
+# Rafraîchir le cache des polices
+fc-cache -fv
+rm -rf "$TMP_FONTS"
+
+echo "✅ Nerd Fonts installées !"
 
 echo "=== Compilation de st ==="
 ST_DIR="$HOME/.config/st"
@@ -122,9 +151,9 @@ else
     echo "⚠️ Répertoire $ST_DIR introuvable. Ignoré."
 fi
 
-
 echo "=== Redémarrage des panels XFCE ==="
 xfce4-panel --restart
 xfwm4 --replace &
 
 echo "✅ Setup complet terminé !"
+echo "✅ Rofi et Nerd Fonts sont installés. Vous pouvez maintenant appliquer le thème Nordic et configurer Rofi."
